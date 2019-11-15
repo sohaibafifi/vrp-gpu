@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>fr.univ-artois.lgi2a</groupId>
+    <artifactId>vrpgpu</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <inceptionYear>2020</inceptionYear>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>4.11</junit.version>
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+    </properties>
+    <organization>
+        <name>Laboratoire de Genie Informatique et d'Automatique de l'Artois</name>
+        <url>http://www.lgi2a.univ-artois.fr/</url>
+    </organization>
+    <developers>
+        <developer>
+            <id>sohaib.lafifi</id>
+            <name>Sohaib LAFIFI</name>
+            <email>sohaib.lafifi@univ-artois.fr</email>
+            <url>http://www.sohaibafifi.com</url>
+            <organization>Laboratoire de Genie Informatique et d'Automatique de l'Artois</organization>
+            <organizationUrl>http://www.lgi2a.univ-artois.fr/</organizationUrl>
+            <roles>
+                <role>designer</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <!-- License of the project -->
+    <licenses>
+        <license>
+            <name>CeCILL-B Free Software License Agreement</name>
+            <url>http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.txt</url>
+        </license>
+    </licenses>
+    <build>
+
+        <!-- Tell that the project is compiled using java 1.8 -->
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.aparapi</groupId>
+            <artifactId>aparapi</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
