@@ -70,38 +70,44 @@ public class Chromosome {
         return problem;
     }
 
+    public void swap(int x, int y) {
+        Client t = sequence.get(x);
+        sequence.set(x, sequence.get(y));
+        sequence.set(y, t);
+    }
+
     public double decode() {
         double cost;
-        ArrayList<Double> v = new ArrayList<>();
+        ArrayList<Float> v = new ArrayList<>();
 
         for (int i = 0; i < sequence.size(); i++) {
-            v.add(Double.POSITIVE_INFINITY);
+            v.add(Float.POSITIVE_INFINITY);
 
         }
         for (int i = 0; i < sequence.size(); i++) {
-            double time = 0, load = 0, distance = 0;
+            float time = 0, load = 0, distance = 0;
             int j = i;
             boolean stop = false;
             do {
                 load += sequence.get(j).getDemand();
                 if (i == j) {
-                    time = Math.max(problem.getDistance(problem.getDepot(), sequence.get(j)),
+                    time = (float) Math.max(problem.getDistance(problem.getDepot(), sequence.get(j)),
                             sequence.get(j).getTimeWindow().getEarliestTime());
                     distance = problem.getDistance(problem.getDepot(), sequence.get(j));
                 } else {
-                    time = Math.max(time - problem.getDistance(sequence.get(j - 1), problem.getDepot())
+                    time = (float) Math.max(time - problem.getDistance(sequence.get(j - 1), problem.getDepot())
                                     + problem.getDistance(sequence.get(j - 1), sequence.get(j)),
                             sequence.get(j).getTimeWindow().getEarliestTime());
-                    distance = distance - problem.getDistance(sequence.get(j), problem.getDepot())
+                    distance = distance - problem.getDistance(sequence.get(j - 1), problem.getDepot())
                             + problem.getDistance(sequence.get(j - 1), sequence.get(j));
                 }
 
                 if (load > problem.getVehicle().getCapacity() || time > sequence.get(j).getTimeWindow().getLatestTime()) {
                     stop = true;
                 } else {
-                    time = time + sequence.get(j).getServiceTime() + problem.getDistance(sequence.get(j), problem.getDepot());
+                    time = (float) (time + sequence.get(j).getServiceTime() + problem.getDistance(sequence.get(j), problem.getDepot()));
                     distance = distance + problem.getDistance(sequence.get(j), problem.getDepot());
-                    double lastCost = (i == 0) ? 0.0 : v.get(i - 1);
+                    float lastCost = (i == 0) ? (float) 0.0 : v.get(i - 1);
                     if (lastCost + distance < v.get(j)) {
                         v.set(j, lastCost + distance);
                     }

@@ -50,15 +50,15 @@ package fr.univ_artois.lgi2a.vrpgpu.data;
 import fr.univ_artois.lgi2a.vrpgpu.data.types.Coordinate;
 
 public class Depot {
-    protected double maxTime;
+    protected float maxTime;
     private Coordinate coordinate;
 
-    public Depot(Coordinate coordinate, double maxTime) {
+    public Depot(Coordinate coordinate, float maxTime) {
         this.maxTime = maxTime;
         this.coordinate = coordinate;
     }
 
-    public double getMaxTime() {
+    public float getMaxTime() {
         return maxTime;
     }
 

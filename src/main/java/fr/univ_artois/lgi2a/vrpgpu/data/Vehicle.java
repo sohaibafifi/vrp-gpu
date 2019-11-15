@@ -47,13 +47,13 @@
 package fr.univ_artois.lgi2a.vrpgpu.data;
 
 public class Vehicle {
-    protected double capacity;
+    protected float capacity;
 
-    public Vehicle(double capacity) {
+    public Vehicle(float capacity) {
         this.capacity = capacity;
     }
 
-    public double getCapacity() {
+    public float getCapacity() {
         return capacity;
     }
 

@@ -52,6 +52,7 @@ import fr.univ_artois.lgi2a.vrpgpu.data.Chromosome;
 import fr.univ_artois.lgi2a.vrpgpu.data.Problem;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public class Decoder extends Kernel {
     final int n;
@@ -67,8 +68,8 @@ public class Decoder extends Kernel {
     public Decoder(Chromosome chromosome) {
 
         this.costs = new float[chromosome.getSequence().size() * chromosome.getSequence().size()];
+        IntStream.range(0, this.costs.length).forEach(i -> this.costs[i] = Float.POSITIVE_INFINITY);
         Problem problem = chromosome.getProblem();
-        this.n = problem.getNbClients();
         this.distances = problem.getFlatDistanceMatrix();
         this.twOpen = problem.getFlatTwOpen();
         this.twClose = problem.getFlatTwClose();
@@ -77,7 +78,7 @@ public class Decoder extends Kernel {
         this.capacity = (float) problem.getVehicle().getCapacity();
         this.gsequence = new int[chromosome.getSequence().size()];
         Arrays.setAll(this.gsequence, i -> chromosome.getSequence().get(i).getId());
-
+        this.n = problem.getNbClients();
 
     }
 
@@ -87,6 +88,18 @@ public class Decoder extends Kernel {
 
     @Override
     public void run() {
+        copySequence();
+
+        int x = getGlobalId(0);
+        int y = getGlobalId(1);
+
+
+        float cost = evaluate(x, y);
+        costs[x * n + y] = cost;
+
+    }
+
+    public void copySequence() {
         for (int i = 0; i < v.length; i++) {
             v[i] = Float.POSITIVE_INFINITY;
         }
@@ -94,45 +107,41 @@ public class Decoder extends Kernel {
         for (int i = 0; i < n - 1; i++) {
             sequence[i] = (short) gsequence[i];
         }
+    }
 
-        int x = getGlobalId(0);
-        int y = getGlobalId(1);
+    public float evaluate(int x, int y) {
         short t = sequence[x];
         sequence[x] = sequence[y];
         sequence[y] = t;
-
-        float cost = evaluate();
-        costs[x * n + y] = cost;
-
-    }
-
-    public float evaluate() {
         float cost;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < sequence.length; i++) {
             float time = 0, load = 0, distance = 0;
-            for (int j = i; j < n; j++) {
-                if (load < capacity && time < twClose[sequence[j]]) {
-                    load += demand[sequence[j]];
+            for (int j = i; j < sequence.length
+                    && load < capacity
+                    && time < twClose[sequence[j]]; ) {
+                load += demand[sequence[j]];
+                if (load < capacity) {
                     if (i == j) {
                         time = max(distances[sequence[j]], twOpen[sequence[j]]);
                         distance = distances[sequence[j]];
                     } else {
-                        time = max(time - distances[sequence[j - 1] * n] + distances[sequence[j - 1] * n + sequence[j]],
+                        time = max(time - distances[sequence[j - 1] * (n)] + distances[sequence[j - 1] * (n) + sequence[j]],
                                 twOpen[sequence[j]]);
-                        distance = distance - distances[sequence[j - 1] * n] + distances[sequence[j - 1] * n + sequence[j]];
+                        distance = distance - distances[sequence[j - 1] * (n)] + distances[sequence[j - 1] * (n) + sequence[j]];
                     }
-                    if (load < capacity && time < twClose[sequence[j]]) {
-                        time = time + service[sequence[j]] + distances[sequence[j] * n];
-                        distance = distance + distances[sequence[j] * n];
+                    if (time < twClose[sequence[j]]) {
+                        time = time + service[sequence[j]] + distances[sequence[j] * (n)];
+                        distance = distance + distances[sequence[j] * (n)];
                         float lastCost = (i == 0) ? 0 : v[i - 1];
                         if (lastCost + distance < v[j]) {
                             v[j] = lastCost + distance;
                         }
+                        j++;
                     }
                 }
             }
         }
-        cost = v[n - 1];
+        cost = v[sequence.length - 1];
         return cost;
     }
 }

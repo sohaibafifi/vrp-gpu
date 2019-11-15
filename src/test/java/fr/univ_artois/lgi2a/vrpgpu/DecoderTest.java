@@ -53,13 +53,13 @@ import fr.univ_artois.lgi2a.vrpgpu.data.Chromosome;
 import fr.univ_artois.lgi2a.vrpgpu.data.Problem;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class DecoderTest {
 
     @Test
     public void run() {
-        Random rd = new Random();
         Problem problem = new Problem();
         problem.read("./data/Solomon/25/c101.txt");
 
@@ -77,34 +77,92 @@ public class DecoderTest {
 
 
         {
+            System.out.println("On the gpu");
             Decoder decoder = new Decoder(chromosome);
 
-            //decoder.setExecutionModeWithoutFallback(Decoder.EXECUTION_MODE.GPU);
+            decoder.setExecutionModeWithoutFallback(Decoder.EXECUTION_MODE.GPU);
             System.out.println(decoder.getExecutionMode());
             Device device = Device.best();
+            System.out.println(device.getShortDescription());
             int n = chromosome.getSequence().size();
             Range range = device.createRange2D(n, n);
-            System.out.println(range);
+            //System.out.println(range);
             decoder.execute(range);
             float[] result = decoder.getCosts();
-            System.out.print("out:  ");
-            for (int i = 0; i < result.length; i++) {
-                System.out.println(i / n + " " + i % n + " : " + result[i]);
-            }
-            System.out.println();
-
             float minimum = result[0];
-            for (float value : result) {
-                if (value != 0) minimum = Math.min(value, minimum);
+            int x = 0, y = 0;
+            for (int i = 0; i < result.length; i++) {
+                if (result[i] < minimum) {
+                    minimum = result[i];
+                    x = i / problem.getNbClients();
+                    y = i % problem.getNbClients();
+                }
             }
+
+            chromosome.swap(x, y);
             System.out.println(minimum);
-            System.out.println(decoder.getExecutionTime());
+            System.out.println("end cost " + chromosome.decode());
+            System.out.println("x = " + x + " y = " + y);
+
+            System.out.println(decoder.getExecutionTime() / 1000 + " sec");
             StringBuilder builder = new StringBuilder();
             KernelManager.instance().reportDeviceUsage(builder, true);
-            System.out.println(builder);
+            // System.out.println(builder);
 
 
             decoder.dispose();
+        }
+
+
+    }
+
+    @Test
+    public void evaluate() {
+        Random rd = new Random(1);
+        Problem problem = new Problem();
+        problem.read("./data/Solomon/25/c101.txt");
+
+
+        Chromosome chromosome = new Chromosome(problem);
+        Decoder decoder = new Decoder(chromosome);
+
+        decoder.copySequence();
+        float cost = decoder.evaluate(0, 0);
+
+        assert (cost == chromosome.decode());
+
+    }
+
+    @Test
+    public void flatten() {
+        final float[] twOpen, twClose, demand, service, distances;
+        final float capacity;
+        int[] gsequence;
+        Problem problem = new Problem();
+        problem.read("./data/Solomon/25/c101.txt");
+        distances = problem.getFlatDistanceMatrix();
+        twOpen = problem.getFlatTwOpen();
+        twClose = problem.getFlatTwClose();
+        demand = problem.getFlatDemands();
+        service = problem.getFlatService();
+        capacity = problem.getVehicle().getCapacity();
+        Chromosome chromosome = new Chromosome(problem);
+        gsequence = new int[chromosome.getSequence().size()];
+        Arrays.setAll(gsequence, i -> chromosome.getSequence().get(i).getId());
+        int n = gsequence.length;
+        for (int i = 0; i < problem.getNbClients(); i++) {
+            assert (twClose[i] == problem.getClient(i).getTimeWindow().getLatestTime());
+            assert (twOpen[i] == problem.getClient(i).getTimeWindow().getEarliestTime());
+            assert (demand[i] == problem.getClient(i).getDemand());
+            assert (service[i] == problem.getClient(i).getServiceTime());
+            for (int j = 0; j < problem.getNbClients(); j++) {
+                assert (distances[i * (problem.getNbClients()) + j] == problem.getDistance(problem.getClient(i), problem.getClient(j)).floatValue());
+            }
+        }
+        assert (capacity == problem.getVehicle().getCapacity());
+
+        for (int i = 0; i < gsequence.length; i++) {
+            assert (gsequence[i] == chromosome.getSequence().get(i).getId());
         }
 
 

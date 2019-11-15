@@ -44,65 +44,22 @@
  *
  */
 
-package fr.univ_artois.lgi2a.vrpgpu.data;
+package fr.univ_artois.lgi2a.vrpgpu.data.types;
 
-import fr.univ_artois.lgi2a.vrpgpu.data.types.Coordinate;
-import fr.univ_artois.lgi2a.vrpgpu.data.types.TimeWindow;
+public class Coordinate {
+    protected float x;
+    protected float y;
 
-import java.util.Objects;
-
-public class Client {
-    private int id;
-    private float demand;
-    private TimeWindow timeWindow;
-    private float serviceTime;
-    private Coordinate coordinate;
-
-    public Client(int id, Coordinate coordinate, float demand, TimeWindow timeWindow, float serviceTime) {
-        this.id = id;
-        this.coordinate = coordinate;
-        this.demand = demand;
-        this.timeWindow = timeWindow;
-        this.serviceTime = serviceTime;
+    public Coordinate(float x, float y) {
+        this.x = x;
+        this.y = y;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Client client = (Client) o;
-        return Float.compare(client.getDemand(), getDemand()) == 0 &&
-                Float.compare(client.getServiceTime(), getServiceTime()) == 0 &&
-                Objects.equals(getTimeWindow(), client.getTimeWindow()) &&
-                Objects.equals(getCoordinate(), client.getCoordinate());
+    public float getX() {
+        return x;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getDemand(), getTimeWindow(), getServiceTime(), getCoordinate());
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public float getDemand() {
-        return demand;
-    }
-
-    public void setDemand(float demand) {
-        this.demand = demand;
-    }
-
-    public TimeWindow getTimeWindow() {
-        return timeWindow;
-    }
-
-    public float getServiceTime() {
-        return serviceTime;
-    }
-
-    public Coordinate getCoordinate() {
-        return coordinate;
+    public float getY() {
+        return y;
     }
 }

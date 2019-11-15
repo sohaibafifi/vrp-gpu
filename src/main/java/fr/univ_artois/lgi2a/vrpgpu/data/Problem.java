@@ -63,7 +63,7 @@ public class Problem {
     protected ArrayList<Client> clients;
     protected Vehicle vehicle;
     protected Depot depot;
-    protected ArrayList<ArrayList<Double>> distances;
+    protected ArrayList<ArrayList<Float>> distances;
 
     public String getName() {
         return name;
@@ -113,22 +113,22 @@ public class Problem {
         this.depot = depot;
     }
 
-    public Double getDistance(Client departure, Client arrival) {
+    public Float getDistance(Client departure, Client arrival) {
         return this.distances.get(departure.getId()).get(arrival.getId());
     }
 
-    public Double getDistance(Depot depot, Client arrival) {
+    public Float getDistance(Depot depot, Client arrival) {
         return this.distances.get(0).get(arrival.getId());
     }
 
-    public Double getDistance(Client departure, Depot depot) {
+    public Float getDistance(Client departure, Depot depot) {
         return this.distances.get(departure.getId()).get(0);
     }
 
     public float[] getFlatDistanceMatrix() {
         float[] list = new float[distances.size() * distances.size()];
         for (int i = 0; i < distances.size(); i++) {
-            for (int j = 0; j < distances.get(i).size(); j++) {
+            for (int j = 0; j < distances.size(); j++) {
                 list[distances.size() * i + j] = distances.get(i).get(j).floatValue();
             }
         }
@@ -137,26 +137,26 @@ public class Problem {
 
     public float[] getFlatTwOpen() {
         float[] twOpen = new float[clients.size()];
-        IntStream.range(0, twOpen.length).forEach(i -> twOpen[i] = (float) clients.get(i).getTimeWindow().getEarliestTime());
+        IntStream.range(0, twOpen.length).forEach(i -> twOpen[clients.get(i).getId()] = (float) clients.get(i).getTimeWindow().getEarliestTime());
         return twOpen;
     }
 
     public float[] getFlatTwClose() {
         float[] twClose = new float[clients.size()];
-        IntStream.range(0, twClose.length).forEach(i -> twClose[i] = (float) clients.get(i).getTimeWindow().getLatestTime());
+        IntStream.range(0, twClose.length).forEach(i -> twClose[clients.get(i).getId()] = (float) clients.get(i).getTimeWindow().getLatestTime());
         return twClose;
     }
 
     public float[] getFlatService() {
         float[] services = new float[clients.size()];
-        IntStream.range(0, services.length).forEach(i -> services[i] = (float) clients.get(i).getServiceTime());
+        IntStream.range(0, services.length).forEach(i -> services[clients.get(i).getId()] = (float) clients.get(i).getServiceTime());
         return services;
     }
 
     public float[] getFlatDemands() {
 
         float[] demands = new float[clients.size()];
-        IntStream.range(0, demands.length).forEach(i -> demands[i] = (float) clients.get(i).getDemand());
+        IntStream.range(0, demands.length).forEach(i -> demands[clients.get(i).getId()] = (float) clients.get(i).getDemand());
         return demands;
     }
 
@@ -185,7 +185,7 @@ public class Problem {
                 reader.readLine();
                 line = reader.readLine();
                 String[] fields = line.split("\\s+");
-                this.setVehicle(new Vehicle(Double.parseDouble(fields[2])));
+                this.setVehicle(new Vehicle(Float.parseFloat(fields[2])));
             }
             if (line.contains("CUSTOMER")) {
                 reader.readLine();
@@ -196,15 +196,15 @@ public class Problem {
                     Client client = new Client(
                             Integer.parseInt(fields[1]),
                             new Coordinate(
-                                    Double.parseDouble(fields[2]),
-                                    Double.parseDouble(fields[3])
+                                    Float.parseFloat(fields[2]),
+                                    Float.parseFloat(fields[3])
                             ),
-                            Double.parseDouble(fields[4]),
+                            Float.parseFloat(fields[4]),
                             new TimeWindow(
-                                    Double.parseDouble(fields[5]),
-                                    Double.parseDouble(fields[6])
+                                    Float.parseFloat(fields[5]),
+                                    Float.parseFloat(fields[6])
                             ),
-                            Double.parseDouble(fields[7])
+                            Float.parseFloat(fields[7])
                     );
                     this.getClients().add(client);
                     line = reader.readLine();
@@ -218,10 +218,9 @@ public class Problem {
                     this.clients.forEach(departure -> {
                         this.distances.add(new ArrayList<>(this.clients.size()));
                         this.clients.forEach(arrival ->
-                                this.distances.get(departure.getId()).add(
-                                        Math.sqrt(
-                                                Math.pow(departure.getCoordinate().getX() - arrival.getCoordinate().getX(), 2.0) +
-                                                        Math.pow(departure.getCoordinate().getY() - arrival.getCoordinate().getY(), 2.0)
+                                this.distances.get(departure.getId()).add((float) Math.sqrt(
+                                        Math.pow(departure.getCoordinate().getX() - arrival.getCoordinate().getX(), 2.0) +
+                                                Math.pow(departure.getCoordinate().getY() - arrival.getCoordinate().getY(), 2.0)
                                         )
                                 )
                         );
