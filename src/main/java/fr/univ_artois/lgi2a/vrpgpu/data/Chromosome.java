@@ -53,6 +53,7 @@ import com.aparapi.device.Device;
 import com.aparapi.device.JavaDevice;
 import com.aparapi.internal.kernel.KernelManager;
 import com.aparapi.internal.kernel.KernelPreferences;
+import com.aparapi.internal.kernel.KernelProfile;
 import fr.univ_artois.lgi2a.vrpgpu.Decoder;
 
 import java.util.ArrayList;
@@ -147,6 +148,10 @@ public class Chromosome {
 
     public void shake(){
         Decoder decoder = new Decoder(this);
+        KernelProfile profile = KernelManager.instance().getProfile(decoder.getClass());
+        KernelPreferences preferences = KernelManager.instance().getPreferences(decoder);
+        List<Device> devices = preferences.getPreferredDevices(decoder);
+        if(devices.isEmpty()) return;
         int n = this.getProblem().getNbClients() - 1;
         float[] costs  = new float[problem.getNbClients() * problem.getNbClients() ];
 

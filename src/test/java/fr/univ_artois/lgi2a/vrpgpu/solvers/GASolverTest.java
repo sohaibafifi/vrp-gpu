@@ -46,6 +46,7 @@
 
 package fr.univ_artois.lgi2a.vrpgpu.solvers;
 
+import com.aparapi.internal.kernel.KernelManager;
 import fr.univ_artois.lgi2a.vrpgpu.data.Problem;
 import org.junit.Test;
 

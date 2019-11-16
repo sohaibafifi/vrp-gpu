@@ -49,11 +49,14 @@ package fr.univ_artois.lgi2a.vrpgpu;
 import com.aparapi.Range;
 import com.aparapi.device.Device;
 import com.aparapi.internal.kernel.KernelManager;
+import com.aparapi.internal.kernel.KernelPreferences;
+import com.aparapi.internal.kernel.KernelProfile;
 import fr.univ_artois.lgi2a.vrpgpu.data.Chromosome;
 import fr.univ_artois.lgi2a.vrpgpu.data.Problem;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class DecoderTest {
@@ -79,7 +82,10 @@ public class DecoderTest {
         {
             System.out.println("On the gpu");
             Decoder decoder = new Decoder(chromosome);
-
+            KernelProfile profile = KernelManager.instance().getProfile(decoder.getClass());
+            KernelPreferences preferences = KernelManager.instance().getPreferences(decoder);
+            List<Device> devices = preferences.getPreferredDevices(decoder);
+            if(devices.isEmpty()) return;
             decoder.setExecutionModeWithoutFallback(Decoder.EXECUTION_MODE.GPU);
             System.out.println(decoder.getExecutionMode());
             Device device = Device.best();
@@ -124,7 +130,10 @@ public class DecoderTest {
 
         Chromosome chromosome = new Chromosome(problem);
         Decoder decoder = new Decoder(chromosome);
-
+        KernelProfile profile = KernelManager.instance().getProfile(decoder.getClass());
+        KernelPreferences preferences = KernelManager.instance().getPreferences(decoder);
+        List<Device> devices = preferences.getPreferredDevices(decoder);
+        if(devices.isEmpty()) return;
         decoder.copySequence();
         float cost = decoder.evaluate(0, 0);
 
