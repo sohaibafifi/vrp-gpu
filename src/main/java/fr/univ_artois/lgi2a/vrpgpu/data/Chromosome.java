@@ -47,11 +47,21 @@
 package fr.univ_artois.lgi2a.vrpgpu.data;
 
 
+import com.aparapi.Kernel;
+import com.aparapi.Range;
+import com.aparapi.device.Device;
+import com.aparapi.device.JavaDevice;
+import com.aparapi.internal.kernel.KernelManager;
+import com.aparapi.internal.kernel.KernelPreferences;
+import fr.univ_artois.lgi2a.vrpgpu.Decoder;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.IntStream;
 
 public class Chromosome {
-    private ArrayList<Client> sequence;
+    private List<Client> sequence;
     private Problem problem;
 
     public Chromosome(Problem problem) {
@@ -62,7 +72,14 @@ public class Chromosome {
         Collections.shuffle(sequence);
     }
 
-    public ArrayList<Client> getSequence() {
+    public Chromosome(Problem problem, List<Client> sequence) {
+        this.problem = problem;
+        this.sequence = sequence;
+    }
+
+
+
+    public List<Client> getSequence() {
         return sequence;
     }
 
@@ -76,8 +93,8 @@ public class Chromosome {
         sequence.set(y, t);
     }
 
-    public double decode() {
-        double cost;
+    public Float decode() {
+        Float cost;
         ArrayList<Float> v = new ArrayList<>();
 
         for (int i = 0; i < sequence.size(); i++) {
@@ -117,5 +134,42 @@ public class Chromosome {
         }
         cost = v.get(sequence.size() - 1);
         return cost;
+    }
+
+    public void print() {
+        System.out.print("[");
+        for (int i = 0; i < sequence.size(); i++) {
+            System.out.print(" " + sequence.get(i).getId());
+        }
+        System.out.print("]  " + decode());
+
+    }
+
+    public void shake(){
+        Decoder decoder = new Decoder(this);
+        int n = this.getProblem().getNbClients() - 1;
+        float[] costs  = new float[problem.getNbClients() * problem.getNbClients() ];
+
+        decoder.execute(Range.create2D(n , n)).get(costs);
+
+        float[] result = decoder.getCosts();
+        float minimum = result[0];
+        int x = 0, y = 0;
+        for (int i = 0; i < result.length; i++) {
+            if (result[i] < minimum) {
+                minimum = result[i];
+                x = i / problem.getNbClients();
+                y = i % problem.getNbClients();
+            }
+        }
+
+        decoder.dispose();
+        this.swap(x, y);
+    }
+
+    public Chromosome copy() {
+        List<Client> sequence = new ArrayList<>();
+        IntStream.range(0, this.sequence.size()).forEach(i -> sequence.add(this.sequence.get(i)));
+        return new Chromosome(this.problem, sequence);
     }
 }

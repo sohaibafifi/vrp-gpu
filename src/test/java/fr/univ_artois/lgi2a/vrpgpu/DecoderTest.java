@@ -118,7 +118,6 @@ public class DecoderTest {
 
     @Test
     public void evaluate() {
-        Random rd = new Random(1);
         Problem problem = new Problem();
         problem.read("./data/Solomon/25/c101.txt");
 
