@@ -59,17 +59,17 @@ public class Decoder extends Kernel {
     final float[] twOpen, twClose, demand, service, distances;
     final float capacity;
     protected int[] gsequence;
-    protected @PrivateMemorySpace(25)
-    short[] sequence = new short[25];
-    protected @PrivateMemorySpace(26)
-    float[] v = new float[26];
+    protected @PrivateMemorySpace(100)
+    short[] sequence = new short[100];
+    protected @PrivateMemorySpace(101)
+    float[] v = new float[101];
     float[] costs;
 
     public Decoder(Chromosome chromosome) {
 
-        this.costs = new float[chromosome.getSequence().size() * chromosome.getSequence().size()];
-        IntStream.range(0, this.costs.length).forEach(i -> this.costs[i] = Float.POSITIVE_INFINITY);
         Problem problem = chromosome.getProblem();
+        this.costs = new float[problem.getNbClients() * problem.getNbClients() ];
+        IntStream.range(0, this.costs.length).forEach(i -> this.costs[i] = Float.POSITIVE_INFINITY);
         this.distances = problem.getFlatDistanceMatrix();
         this.twOpen = problem.getFlatTwOpen();
         this.twClose = problem.getFlatTwClose();
@@ -90,8 +90,8 @@ public class Decoder extends Kernel {
     public void run() {
         copySequence();
 
-        int x = getGlobalId(0);
-        int y = getGlobalId(1);
+        int x = getGlobalId(0) % n;
+        int y = getGlobalId(1) % n;
 
 
         float cost = evaluate(x, y);
@@ -114,9 +114,9 @@ public class Decoder extends Kernel {
         sequence[x] = sequence[y];
         sequence[y] = t;
         float cost;
-        for (int i = 0; i < sequence.length; i++) {
+        for (int i = 0; i < n; i++) {
             float time = 0, load = 0, distance = 0;
-            for (int j = i; j < sequence.length
+            for (int j = i; j < n
                     && load < capacity
                     && time < twClose[sequence[j]]; ) {
                 load += demand[sequence[j]];
@@ -141,7 +141,7 @@ public class Decoder extends Kernel {
                 }
             }
         }
-        cost = v[sequence.length - 1];
+        cost = v[n - 1];
         return cost;
     }
 }
