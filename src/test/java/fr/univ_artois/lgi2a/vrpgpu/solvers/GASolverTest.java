@@ -46,18 +46,15 @@
 
 package fr.univ_artois.lgi2a.vrpgpu.solvers;
 
-import com.aparapi.internal.kernel.KernelManager;
 import fr.univ_artois.lgi2a.vrpgpu.data.Problem;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class GASolverTest {
 
     @Test
     public void solve() {
         Problem problem = new Problem();
-        problem.read("./data/Solomon/50/c101.txt");
+        problem.read("./data/Solomon/50/c201.txt");
         GASolver solver = new GASolver(problem);
         solver.solve();
         System.out.println("Solution " + solver.getCost() + " in " + solver.getCputime() + " sec");

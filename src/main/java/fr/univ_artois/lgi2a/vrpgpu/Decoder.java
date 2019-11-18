@@ -80,21 +80,31 @@ public class Decoder extends Kernel {
         Arrays.setAll(this.gsequence, i -> chromosome.getSequence().get(i).getId());
         this.n = problem.getNbClients();
 
+        setExplicit(true);
+        put(distances);
+        put(twClose);
+        put(twOpen);
+        put(demand);
+        put(service);
+        put(gsequence);
+        put(costs);
+
     }
 
     public float[] getCosts() {
+        get(costs);
         return costs;
     }
 
     @Override
     public void run() {
         copySequence();
-
         int x = getGlobalId(0) % n;
         int y = getGlobalId(1) % n;
 
 
         float cost = evaluate(x, y);
+
         costs[x * n + y] = cost;
 
     }
@@ -103,7 +113,6 @@ public class Decoder extends Kernel {
         for (int i = 0; i < v.length; i++) {
             v[i] = Float.POSITIVE_INFINITY;
         }
-
         for (int i = 0; i < n - 1; i++) {
             sequence[i] = (short) gsequence[i];
         }

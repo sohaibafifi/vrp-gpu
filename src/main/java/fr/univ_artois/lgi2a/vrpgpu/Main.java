@@ -46,6 +46,10 @@
 
 package fr.univ_artois.lgi2a.vrpgpu;
 
+import com.aparapi.internal.kernel.KernelManager;
+import fr.univ_artois.lgi2a.vrpgpu.data.Problem;
+import fr.univ_artois.lgi2a.vrpgpu.solvers.GASolver;
+
 public class Main {
     /**
      * Main function
@@ -53,5 +57,18 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
+        System.setProperty("com.amd.aparapi.dumpProfilesOnExit", "true");
+        System.setProperty("com.amd.aparapi.enableProfiling", "true");
+        System.setProperty("com.amd.aparapi.enableVerboseJNI", "true");
+        System.setProperty("com.amd.aparapi.dumpFlags", "true");
+        System.setProperty("com.amd.aparapi.enableShowGeneratedOpenCL", "true");
+        System.setProperty("com.amd.aparapi.enableVerboseJNIOpenCLResourceTracking", "true");
+        System.setProperty("com.amd.aparapi.enableExecutionModeReporting", "true");
+        System.out.println(KernelManager.instance().bestDevice());
+        Problem problem = new Problem();
+        problem.read(args[0]);
+        GASolver solver = new GASolver(problem);
+        solver.solve();
+        System.out.println("Solution " + solver.getCost() + " in " + solver.getCputime() + " sec");
     }
 }

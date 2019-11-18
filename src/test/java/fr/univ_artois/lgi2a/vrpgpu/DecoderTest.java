@@ -57,7 +57,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class DecoderTest {
 
@@ -86,7 +85,6 @@ public class DecoderTest {
             KernelPreferences preferences = KernelManager.instance().getPreferences(decoder);
             List<Device> devices = preferences.getPreferredDevices(decoder);
             if(devices.isEmpty()) return;
-            decoder.setExecutionModeWithoutFallback(Decoder.EXECUTION_MODE.GPU);
             System.out.println(decoder.getExecutionMode());
             Device device = Device.best();
             System.out.println(device.getShortDescription());
@@ -109,6 +107,7 @@ public class DecoderTest {
             System.out.println(minimum);
             System.out.println("end cost " + chromosome.decode());
             System.out.println("x = " + x + " y = " + y);
+            System.out.println(decoder.getProfileReportCurrentThread(decoder.getTargetDevice()).get().getExecutionTime() / 1000 + " sec");
 
             System.out.println(decoder.getExecutionTime() / 1000 + " sec");
             StringBuilder builder = new StringBuilder();

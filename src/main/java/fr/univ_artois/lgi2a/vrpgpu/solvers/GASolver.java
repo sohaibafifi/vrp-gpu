@@ -72,7 +72,6 @@ public class GASolver {
             population.evolve();
             Chromosome chromosome = population.getBestChromsome();
             chromosome.shake();
-            //System.out.println(chromosome.decode() + "    best " + bestChromsome.decode());
             if (chromosome.decode() < bestChromsome.decode()) {
 
                 bestChromsome = chromosome.copy();
