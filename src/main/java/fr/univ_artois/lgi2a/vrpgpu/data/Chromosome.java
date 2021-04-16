@@ -47,12 +47,11 @@
 package fr.univ_artois.lgi2a.vrpgpu.data;
 
 
-import com.aparapi.Kernel;
 import com.aparapi.Range;
 import com.aparapi.device.Device;
 import com.aparapi.internal.kernel.KernelManager;
 import com.aparapi.internal.kernel.KernelPreferences;
-import fr.univ_artois.lgi2a.vrpgpu.Decoder;
+import fr.univ_artois.lgi2a.vrpgpu.solvers.Decoder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,13 +59,13 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class Chromosome {
-    private List<Client> sequence;
-    private Problem problem;
+    private final List<Client> sequence;
+    private final Problem problem;
 
     public Chromosome(Problem problem) {
         this.problem = problem;
         sequence = new ArrayList<>();
-        problem.getClients().forEach(client -> sequence.add(client));
+        sequence.addAll(problem.getClients());
         sequence.remove(0);
         Collections.shuffle(sequence);
     }
@@ -107,11 +106,11 @@ public class Chromosome {
             do {
                 load += sequence.get(j).getDemand();
                 if (i == j) {
-                    time = (float) Math.max(problem.getDistance(problem.getDepot(), sequence.get(j)),
+                    time = Math.max(problem.getDistance(problem.getDepot(), sequence.get(j)),
                             sequence.get(j).getTimeWindow().getEarliestTime());
                     distance = problem.getDistance(problem.getDepot(), sequence.get(j));
                 } else {
-                    time = (float) Math.max(time - problem.getDistance(sequence.get(j - 1), problem.getDepot())
+                    time = Math.max(time - problem.getDistance(sequence.get(j - 1), problem.getDepot())
                                     + problem.getDistance(sequence.get(j - 1), sequence.get(j)),
                             sequence.get(j).getTimeWindow().getEarliestTime());
                     distance = distance - problem.getDistance(sequence.get(j - 1), problem.getDepot())
@@ -121,9 +120,9 @@ public class Chromosome {
                 if (load > problem.getVehicle().getCapacity() || time > sequence.get(j).getTimeWindow().getLatestTime()) {
                     stop = true;
                 } else {
-                    time = (float) (time + sequence.get(j).getServiceTime() + problem.getDistance(sequence.get(j), problem.getDepot()));
+                    time = time + sequence.get(j).getServiceTime() + problem.getDistance(sequence.get(j), problem.getDepot());
                     distance = distance + problem.getDistance(sequence.get(j), problem.getDepot());
-                    float lastCost = (i == 0) ? (float) 0.0 : v.get(i - 1);
+                    float lastCost = (i == 0) ? 0.0f : v.get(i - 1);
                     if (lastCost + distance < v.get(j)) {
                         v.set(j, lastCost + distance);
                     }
@@ -144,21 +143,28 @@ public class Chromosome {
 
     }
 
-    public void shake(){
+    /**
+     * The shake operator tries all the swaps
+     * between every (x, y) position
+     * according to the used
+     * gpu processor
+     */
+    public void shake() {
         Decoder decoder = new Decoder(this);
         KernelPreferences preferences = KernelManager.instance().getPreferences(decoder);
         List<Device> devices = preferences.getPreferredDevices(decoder);
-        if(devices.isEmpty()) return;
+        if (devices.isEmpty()) return;
         int n = this.getProblem().getNbClients() - 1;
-        float[] costs  = new float[problem.getNbClients() * problem.getNbClients() ];
-        Device choosen = Device.best();
+        float[] costs = new float[problem.getNbClients() * problem.getNbClients()];
+        // Be sure we are using a GPU here
+        Device chosen = null;
         for (Device device : devices) {
-            if (device.getDeviceId() == 16915456) {
-                choosen = device;
+            if (device.getType() == Device.TYPE.GPU) {
+                chosen = device;
+                break;
             }
         }
-        decoder.setExecutionMode(Kernel.EXECUTION_MODE.GPU);
-        decoder.execute(Range.create2D(choosen, n, n)).get(costs);
+        decoder.execute(Range.create2D(chosen, n, n)).get(costs);
 
         float[] result = decoder.getCosts();
         float minimum = result[0];

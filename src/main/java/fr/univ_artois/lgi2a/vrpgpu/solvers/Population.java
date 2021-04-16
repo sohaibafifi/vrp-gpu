@@ -62,7 +62,7 @@ public class Population {
     public Population(Problem problem) {
         this.problem = problem;
         this.maxSize = problem.getNbClients();
-        this.chromosomes = new ArrayList<Chromosome>(this.maxSize);
+        this.chromosomes = new ArrayList<>(this.maxSize);
 
         while (this.chromosomes.size() < this.maxSize) {
 

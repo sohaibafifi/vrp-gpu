@@ -47,5 +47,5 @@
 package fr.univ_artois.lgi2a.vrpgpu.data.types;
 
 public interface IVerifiable {
-    public boolean isValid();
+    boolean isValid();
 }

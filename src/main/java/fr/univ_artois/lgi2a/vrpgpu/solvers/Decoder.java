@@ -44,7 +44,7 @@
  *
  */
 
-package fr.univ_artois.lgi2a.vrpgpu;
+package fr.univ_artois.lgi2a.vrpgpu.solvers;
 
 
 import com.aparapi.Kernel;
@@ -96,6 +96,9 @@ public class Decoder extends Kernel {
         return costs;
     }
 
+    /**
+     * run an evaluation in the (x, y) processor
+     */
     @Override
     public void run() {
         copySequence();
@@ -118,6 +121,12 @@ public class Decoder extends Kernel {
         }
     }
 
+    /**
+     * Exchange the position x with y and evaluate
+     * the new chromosome using SPF algorithm
+     *
+     * @return The cost of the new chromosome
+     */
     public float evaluate(int x, int y) {
         short t = sequence[x];
         sequence[x] = sequence[y];

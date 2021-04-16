@@ -52,20 +52,24 @@ import fr.univ_artois.lgi2a.vrpgpu.data.Problem;
 public class GASolver {
     private Problem problem;
     private double cpuTime;
-    private double totalDistance;
-    private int nbVehicles;
     private Chromosome bestChromsome;
 
     public GASolver(Problem problem) {
         this.problem = problem;
     }
 
-
-    public Float solve() {
+    /**
+     * Run a simple genetic algorithm
+     * The shake method uses the GPU to evaluate
+     * all the possible swaps and returns the best one
+     *
+     * @return the cost of the best solution found
+     */
+    public double solve() {
         long start = System.currentTimeMillis();
         Population population = new Population(problem);
         bestChromsome = population.getBestChromsome().copy();
-        double iterMax = Math.pow( problem.getNbClients(), 2);
+        double iterMax = Math.pow(problem.getNbClients(), 2);
         double iter = 0;
         System.out.println(bestChromsome.decode());
         do {
@@ -73,9 +77,8 @@ public class GASolver {
             Chromosome chromosome = population.getBestChromsome();
             chromosome.shake();
             if (chromosome.decode() < bestChromsome.decode()) {
-
                 bestChromsome = chromosome.copy();
-                System.out.println("    best " + bestChromsome.decode());
+                System.out.println("\best " + bestChromsome.decode());
                 iter = 0;
             } else iter++;
         } while (iter < iterMax);
@@ -85,24 +88,12 @@ public class GASolver {
     }
 
 
-
-
-    public int getNbVehicles() {
-        return nbVehicles;
-    }
-
-    public double getTotalDistance() {
-        return totalDistance;
-    }
-
-    public double getCputime() {
+    public double getCpuTime() {
         return this.cpuTime;
     }
-
 
     public double getCost() {
         return bestChromsome.decode();
     }
-
 
 }

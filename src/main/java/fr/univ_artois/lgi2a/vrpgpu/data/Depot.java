@@ -51,7 +51,7 @@ import fr.univ_artois.lgi2a.vrpgpu.data.types.Coordinate;
 
 public class Depot {
     protected float maxTime;
-    private Coordinate coordinate;
+    private final Coordinate coordinate;
 
     public Depot(Coordinate coordinate, float maxTime) {
         this.maxTime = maxTime;

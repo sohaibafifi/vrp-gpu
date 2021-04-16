@@ -54,9 +54,9 @@ public class GASolverTest {
     @Test
     public void solve() {
         Problem problem = new Problem();
-        problem.read("./data/Solomon/50/c201.txt");
+        problem.read("./data/Solomon/50/c101.txt");
         GASolver solver = new GASolver(problem);
         solver.solve();
-        System.out.println("Solution " + solver.getCost() + " in " + solver.getCputime() + " sec");
+        System.out.println("Solution " + solver.getCost() + " in " + solver.getCpuTime() + " sec");
     }
 }

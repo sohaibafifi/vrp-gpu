@@ -52,11 +52,11 @@ import fr.univ_artois.lgi2a.vrpgpu.data.types.TimeWindow;
 import java.util.Objects;
 
 public class Client {
-    private int id;
+    private final int id;
     private float demand;
-    private TimeWindow timeWindow;
-    private float serviceTime;
-    private Coordinate coordinate;
+    private final TimeWindow timeWindow;
+    private final float serviceTime;
+    private final Coordinate coordinate;
 
     public Client(int id, Coordinate coordinate, float demand, TimeWindow timeWindow, float serviceTime) {
         this.id = id;

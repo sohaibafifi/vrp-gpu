@@ -137,26 +137,26 @@ public class Problem {
 
     public float[] getFlatTwOpen() {
         float[] twOpen = new float[clients.size()];
-        IntStream.range(0, twOpen.length).forEach(i -> twOpen[clients.get(i).getId()] = (float) clients.get(i).getTimeWindow().getEarliestTime());
+        IntStream.range(0, twOpen.length).forEach(i -> twOpen[clients.get(i).getId()] = clients.get(i).getTimeWindow().getEarliestTime());
         return twOpen;
     }
 
     public float[] getFlatTwClose() {
         float[] twClose = new float[clients.size()];
-        IntStream.range(0, twClose.length).forEach(i -> twClose[clients.get(i).getId()] = (float) clients.get(i).getTimeWindow().getLatestTime());
+        IntStream.range(0, twClose.length).forEach(i -> twClose[clients.get(i).getId()] = clients.get(i).getTimeWindow().getLatestTime());
         return twClose;
     }
 
     public float[] getFlatService() {
         float[] services = new float[clients.size()];
-        IntStream.range(0, services.length).forEach(i -> services[clients.get(i).getId()] = (float) clients.get(i).getServiceTime());
+        IntStream.range(0, services.length).forEach(i -> services[clients.get(i).getId()] = clients.get(i).getServiceTime());
         return services;
     }
 
     public float[] getFlatDemands() {
 
         float[] demands = new float[clients.size()];
-        IntStream.range(0, demands.length).forEach(i -> demands[clients.get(i).getId()] = (float) clients.get(i).getDemand());
+        IntStream.range(0, demands.length).forEach(i -> demands[clients.get(i).getId()] = clients.get(i).getDemand());
         return demands;
     }
 

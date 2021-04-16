@@ -54,7 +54,7 @@ public class Main {
     /**
      * Main function
      *
-     * @param args
+     * @param args, args[0] is the data file path
      */
     public static void main(String[] args) {
         System.setProperty("com.amd.aparapi.dumpProfilesOnExit", "true");
@@ -69,6 +69,6 @@ public class Main {
         problem.read(args[0]);
         GASolver solver = new GASolver(problem);
         solver.solve();
-        System.out.println("Solution " + solver.getCost() + " in " + solver.getCputime() + " sec");
+        System.out.println("Solution " + solver.getCost() + " in " + solver.getCpuTime() + " sec");
     }
 }

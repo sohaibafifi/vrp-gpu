@@ -47,8 +47,8 @@
 package fr.univ_artois.lgi2a.vrpgpu.data.types;
 
 public class TimeWindow {
-    private float earliestTime;
-    private float latestTime;
+    private final float earliestTime;
+    private final float latestTime;
 
     public TimeWindow(float earliestTime, float latestTime) {
         this.earliestTime = earliestTime;

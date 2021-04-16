@@ -53,6 +53,7 @@ import com.aparapi.internal.kernel.KernelPreferences;
 import com.aparapi.internal.kernel.KernelProfile;
 import fr.univ_artois.lgi2a.vrpgpu.data.Chromosome;
 import fr.univ_artois.lgi2a.vrpgpu.data.Problem;
+import fr.univ_artois.lgi2a.vrpgpu.solvers.Decoder;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -63,7 +64,7 @@ public class DecoderTest {
     @Test
     public void run() {
         Problem problem = new Problem();
-        problem.read("./data/Solomon/25/c101.txt");
+        problem.read("./data/Solomon/50/c101.txt");
 
 
         Chromosome chromosome = new Chromosome(problem);
@@ -90,7 +91,7 @@ public class DecoderTest {
             System.out.println(device.getShortDescription());
             int n = chromosome.getSequence().size();
             Range range = device.createRange2D(n, n);
-            //System.out.println(range);
+            System.out.println(range);
             decoder.execute(range);
             float[] result = decoder.getCosts();
             float minimum = result[0];
@@ -112,7 +113,7 @@ public class DecoderTest {
             System.out.println(decoder.getExecutionTime() / 1000 + " sec");
             StringBuilder builder = new StringBuilder();
             KernelManager.instance().reportDeviceUsage(builder, true);
-            // System.out.println(builder);
+            System.out.println(builder);
 
 
             decoder.dispose();
