@@ -64,7 +64,7 @@ public class DecoderTest {
     @Test
     public void run() {
         Problem problem = new Problem();
-        problem.read("./data/Solomon/50/c101.txt");
+        problem.read("./data/Solomon/100/c101.txt");
 
 
         Chromosome chromosome = new Chromosome(problem);
@@ -125,7 +125,7 @@ public class DecoderTest {
     @Test
     public void evaluate() {
         Problem problem = new Problem();
-        problem.read("./data/Solomon/25/c101.txt");
+        problem.read("./data/Solomon/100/c101.txt");
 
 
         Chromosome chromosome = new Chromosome(problem);
@@ -147,7 +147,7 @@ public class DecoderTest {
         final float capacity;
         int[] gsequence;
         Problem problem = new Problem();
-        problem.read("./data/Solomon/25/c101.txt");
+        problem.read("./data/Solomon/100/c101.txt");
         distances = problem.getFlatDistanceMatrix();
         twOpen = problem.getFlatTwOpen();
         twClose = problem.getFlatTwClose();

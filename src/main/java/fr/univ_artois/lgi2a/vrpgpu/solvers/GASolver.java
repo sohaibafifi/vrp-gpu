@@ -69,7 +69,7 @@ public class GASolver {
         long start = System.currentTimeMillis();
         Population population = new Population(problem);
         bestChromsome = population.getBestChromsome().copy();
-        double iterMax = Math.pow(problem.getNbClients(), 2);
+        double iterMax = Math.pow(problem.getNbClients(), 3);
         double iter = 0;
         System.out.println(bestChromsome.decode());
         do {
@@ -78,7 +78,7 @@ public class GASolver {
             chromosome.shake();
             if (chromosome.decode() < bestChromsome.decode()) {
                 bestChromsome = chromosome.copy();
-                System.out.println("\best " + bestChromsome.decode());
+                System.out.println("\rbest " + bestChromsome.decode());
                 iter = 0;
             } else iter++;
         } while (iter < iterMax);

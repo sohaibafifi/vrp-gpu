@@ -55,30 +55,32 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class Decoder extends Kernel {
-    final int n;
+    final int nbNodes;
     final float[] twOpen, twClose, demand, service, distances;
     final float capacity;
     protected int[] gsequence;
-    protected @PrivateMemorySpace(100)
+    @PrivateMemorySpace(101)
+    protected
     short[] sequence = new short[100];
-    protected @PrivateMemorySpace(101)
-    float[] v = new float[101];
+    @PrivateMemorySpace(102)
+    protected
+    float[] labels = new float[101];
     float[] costs;
 
     public Decoder(Chromosome chromosome) {
 
         Problem problem = chromosome.getProblem();
-        this.costs = new float[problem.getNbClients() * problem.getNbClients() ];
+        this.costs = new float[problem.getNbClients() * problem.getNbClients()];
         IntStream.range(0, this.costs.length).forEach(i -> this.costs[i] = Float.POSITIVE_INFINITY);
         this.distances = problem.getFlatDistanceMatrix();
         this.twOpen = problem.getFlatTwOpen();
         this.twClose = problem.getFlatTwClose();
         this.demand = problem.getFlatDemands();
         this.service = problem.getFlatService();
-        this.capacity = (float) problem.getVehicle().getCapacity();
+        this.capacity = problem.getVehicle().getCapacity();
         this.gsequence = new int[chromosome.getSequence().size()];
         Arrays.setAll(this.gsequence, i -> chromosome.getSequence().get(i).getId());
-        this.n = problem.getNbClients();
+        this.nbNodes = problem.getNbClients();
 
         setExplicit(true);
         put(distances);
@@ -93,7 +95,7 @@ public class Decoder extends Kernel {
 
     public float[] getCosts() {
         get(costs);
-        return costs;
+        return costs.clone();
     }
 
     /**
@@ -102,21 +104,21 @@ public class Decoder extends Kernel {
     @Override
     public void run() {
         copySequence();
-        int x = getGlobalId(0) % n;
-        int y = getGlobalId(1) % n;
+        int x = getGlobalId(0) % nbNodes;
+        int y = getGlobalId(1) % nbNodes;
 
 
         float cost = evaluate(x, y);
 
-        costs[x * n + y] = cost;
+        costs[x * nbNodes + y] = cost;
 
     }
 
     public void copySequence() {
-        for (int i = 0; i < v.length; i++) {
-            v[i] = Float.POSITIVE_INFINITY;
+        for (int i = 0; i < labels.length; i++) {
+            labels[i] = Float.POSITIVE_INFINITY;
         }
-        for (int i = 0; i < n - 1; i++) {
+        for (int i = 0; i < nbNodes - 1; i++) {
             sequence[i] = (short) gsequence[i];
         }
     }
@@ -132,9 +134,9 @@ public class Decoder extends Kernel {
         sequence[x] = sequence[y];
         sequence[y] = t;
         float cost;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < nbNodes - 1; i++) {
             float time = 0, load = 0, distance = 0;
-            for (int j = i; j < n
+            for (int j = i; j < nbNodes - 1
                     && load < capacity
                     && time < twClose[sequence[j]]; ) {
                 load += demand[sequence[j]];
@@ -143,23 +145,23 @@ public class Decoder extends Kernel {
                         time = max(distances[sequence[j]], twOpen[sequence[j]]);
                         distance = distances[sequence[j]];
                     } else {
-                        time = max(time - distances[sequence[j - 1] * (n)] + distances[sequence[j - 1] * (n) + sequence[j]],
+                        time = max(time - distances[sequence[j - 1] * nbNodes] + distances[sequence[j - 1] * nbNodes + sequence[j]],
                                 twOpen[sequence[j]]);
-                        distance = distance - distances[sequence[j - 1] * (n)] + distances[sequence[j - 1] * (n) + sequence[j]];
+                        distance = distance - distances[sequence[j - 1] * nbNodes] + distances[sequence[j - 1] * nbNodes + sequence[j]];
                     }
                     if (time < twClose[sequence[j]]) {
-                        time = time + service[sequence[j]] + distances[sequence[j] * (n)];
-                        distance = distance + distances[sequence[j] * (n)];
-                        float lastCost = (i == 0) ? 0 : v[i - 1];
-                        if (lastCost + distance < v[j]) {
-                            v[j] = lastCost + distance;
+                        time = time + service[sequence[j]] + distances[sequence[j] * nbNodes];
+                        distance = distance + distances[sequence[j] * nbNodes];
+                        float lastCost = (i == 0) ? 0 : labels[i - 1];
+                        if (lastCost + distance < labels[j]) {
+                            labels[j] = lastCost + distance;
                         }
                         j++;
                     }
                 }
             }
         }
-        cost = v[n - 1];
+        cost = labels[nbNodes - 2];
         return cost;
     }
 }
