@@ -4,3 +4,8 @@
 __Feature:__
 
 * Better markdown documentation
+
+__Additions:__
+
+* CHANGELOG.md and CONTRIBUTING.md files
+* Markdown preview script 'doc/preview.py'
