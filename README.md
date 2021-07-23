@@ -20,12 +20,12 @@
 </div>
 
 <div align="center">
-[License](LICENSE) •
-[Contributing](CONTRIBUTING.md) •
-[Change log](CHANGELOG.md)
+<a href="LICENSE">License</a> •
+<a href="CONTRIBUTING.md">Contributing</a> •
+<a href="CHANGELOG.md">Change log</a>
 
-[Detailed usage](doc/usage.md) •
-[FAQ](doc/faq.md)
+<a href="doc/usage.md">Detailed usage</a> •
+<a href="doc/faq.md">FAQ</a>
 </div>
 
 ## About
