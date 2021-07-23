@@ -2,7 +2,7 @@
   <h1>Detailed usage of the project</h1>
 </div>
 <div align="center">
-  <a href="..">⮌ Parent</a> •
+  <a href="../README.md">⮌ Parent</a> •
   <a href="#about-the-data-files">About the data files</a>
 </div>
 

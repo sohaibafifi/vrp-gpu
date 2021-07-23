@@ -2,7 +2,7 @@
   <h1>F.A.Q.</h1>
 </div>
 <div align="center">
-  <a href="..">⮌ Parent</a> •
+  <a href="../README.md">⮌ Parent</a> •
   <a href="#diagnose-test-failures">Diagnose test failures</a>
 </div>
 
