@@ -56,7 +56,8 @@ terminal located in the base directory of the project :
 * `mvn package -Dmaven.test.skip=true` to build an all-in-one jar containing the library without running the unit tests.
 
 The main class of the project is `fr.univ_artois.lgi2a.vrpgpu.Main`, and takes
-as an argument the path of the file describing the VRP problem to solve.
+as an argument the path of the [file describing the VRP problem to
+solve](doc/usage.md#about-the-data-files).
 Such files can be found in the `data/` directory.
 
 Assuming that the all-in-one jar is built, then running the program is done using
@@ -88,3 +89,4 @@ This tool is licensed under the [TODO license](LICENSE).
 Registered contributors are:
 
 * Sohaib LAFIFI - _<sohaib.lafifi@univ-artois.fr>_ - designer,developer
+* Yoann KUBERA - _<yoann.kubera@univ-artois.fr>_ - documentation
