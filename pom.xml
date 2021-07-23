@@ -64,6 +64,13 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <archive>
+                      <manifest>
+                          <mainClass>
+                              fr.univ_artois.lgi2a.vrpgpu.Main
+                          </mainClass>
+                      </manifest>
+                    </archive>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
